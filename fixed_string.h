@@ -13,9 +13,17 @@ NOTE: what I do not do is inherit for implementation. Which I have done here :wi
 #define DBJ_COLLECTOR_IMP
 #include "dbj_collector.h"
 
-// DBJ: "regulated" #define nssv_USES_STD_STRING_VIEW 0 inside
-#define nssv_CONFIG_NO_EXCEPTIONS 1
-#define nssv_CONFIG_NO_STREAM_INSERTION 1
+// Please see https://github.com/martinmoene/string-view-lite#configuration
+// and  string_view.tweak.h
+
+#ifdef __has_include
+# if __has_include("string_view.tweak.h")
+#  include "string_view.tweak.h"
+# else
+#  error string_view.tweak.h missing
+# endif
+#endif // __has_include
+
 #include "string_view_stand_alone.h"
 
 namespace dbj

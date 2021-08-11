@@ -4,18 +4,12 @@
 		{
 			"type": "cppbuild",
 			"label": "CLANG-CL",
-			/* 
-			please change this to your local clang-cl full path 
-			or your local GCC path
-			*/
 			"command": "D:\\PROD\\programs\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
 			"args": [
 				"/Zi",
-				"/std:c++17", /* c++20 is necessary for nonstd::string_view operator "" _sv to be constexpr, but clang-cl 11.0 no can do */
+				"/std:c++17",
 				"/D_HAS_EXCEPTIONS=0",
 				"/nologo",
-/*				"/Fe:",
-				"${fileDirname}\\${fileBasenameNoExtension}.exe", */
 				"${file}"
 			],
 			"options": {
@@ -29,6 +23,27 @@
 				"isDefault": true
 			},
 			"detail": "compiler: clang-cl.exe"
+		},
+		{
+			"type": "cppbuild",
+			"label": "clang build active file",
+			"command": "D:\\PROD\\programs\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe",
+			"args": [
+				"-std=c++20",
+				/* "-g", */
+				/* "-s", */
+				"${file}",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: D:\\PROD\\programs\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe"
 		}
 	]
 }

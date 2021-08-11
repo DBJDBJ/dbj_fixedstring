@@ -41,9 +41,11 @@ I use this like so:
 
 // tweak header support:
 
+// DBJ: changed to "string_view.tweak.h"
+
 #ifdef __has_include
-# if __has_include(<nonstd/string_view.tweak.hpp>)
-#  include <nonstd/string_view.tweak.hpp>
+# if __has_include("string_view.tweak.h")
+#  include "string_view.tweak.h"
 # endif
 #define nssv_HAVE_TWEAK_HEADER  1
 #else
@@ -140,6 +142,8 @@ I use this like so:
 //
 
 #if nssv_USES_STD_STRING_VIEW
+
+#error you do noy want this
 
 // #include <string_view>
 
