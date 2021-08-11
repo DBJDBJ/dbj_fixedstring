@@ -1,17 +1,16 @@
 
-#define nssv_CONFIG_STD_SV_OPERATOR 1
 #include "fixed_string.h"
 #include "ubut/ubench.h"
 
 UBENCH ( bench_01 , fixed_string )
 {
-    
+    // NOTE: ""sv is not user definable
     using namespace nonstd::literals;
   constexpr auto N = nonstd::string_view::npos;
  
   assert(
     5 == "delete"_sv.find_last_of("cdef"_sv) &&
-      //       └────────────────────┘
+      //       └────────────────────┘ 
     N == "double"_sv.find_last_of("fghi"_sv) &&
       //
     0 == "else"_sv.find_last_of("bcde"_sv, 2 /* pos [0..2]: "els" */) &&
