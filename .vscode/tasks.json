@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "CLANG-CL",
+			/* 
+			please change this to your local clang-cl full path 
+			or your local GCC path
+			*/
+			"command": "D:\\PROD\\programs\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe",
+			"args": [
+				"/Zi",
+				/* "/TC", */
+				"/D_HAS_EXCEPTIONS=0",
+				"/nologo",
+/*				"/Fe:",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe", */
+				"${file}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: clang-cl.exe"
+		}
+	]
+}
