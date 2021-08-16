@@ -1,5 +1,7 @@
 # DBJ FIXED_STRING
 
+## Caveat Emptor ("Let the Buyer beware")
+
 The purpose of this lib is Proof Of Concept aka POC. This is not "industrial strength" , "drop in replacement" (to what?) It is simply an POC.
 
 ### Fixed string with string_view front end.
