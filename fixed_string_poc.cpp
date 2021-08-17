@@ -1,4 +1,6 @@
-
+/*
+(c) 2021 by dbj@dbj.org
+*/
 #include "fixed_string.h"
 #include "ubut/ubench.h"
 
