@@ -11,7 +11,7 @@ release build result:
 [  PASSED  ]2 benchmarks.
 
 WIN10 PRO, 8GB RAM, on SSD
-/*
+
 (c) 2021 by dbj@dbj.org
 */
 #include "fixed_string.h"
@@ -28,11 +28,13 @@ inline dbj::fixed_string assign(dbj::fixed_string fixie, const char (&str)[N]) n
   return fixie;
 }
 
+// Behavioral advice
+//
 // fixed_string is a view to the slab it references
-// it is not an exclusive owner of it
-// here we clean it and move out a copy of the view to the cleanend data
-// thus the original will reference the same data slab
-// as the view returned
+// it is not an exclusive owner of it, here we clean it and 
+// move out a copy of the view to the cleanend data
+// the original will reference the same cleaned data slab
+// as the view returned, much like pointers, but with no pointers.
 inline dbj::fixed_string clean(dbj::fixed_string fixie ) noexcept
 {
   constexpr auto char_zero = '\0';
@@ -40,31 +42,39 @@ inline dbj::fixed_string clean(dbj::fixed_string fixie ) noexcept
   return fixie;
 }
 
-// one is enough
-// remember you are NOT supposed to free pixie data!
-inline auto global_pixie_ = dbj::fixed_string::make(0xFF);
+// one is perhaps enough
+// remember you are NOT supposed to free Fixie data
+// it stays in the memory untill the very end
+inline auto global_fixie_ = dbj::fixed_string::make(0xFF);
 
-inline auto moveinmoveout = [](auto pixie)
+template <typename FT_ , size_t N>
+inline auto movein_assign_moveout (FT_ fixie_, const char (&data_)[N] )
 {
-  return assign(global_pixie_, "DATA");
+  return assign(fixie_, data_);
 };
 
-UBENCH(bench_02, assing_to_fixed_string)
+// remember: we benchmark abnd develop in the same time,
+// thus in here we do not compare 
+UBENCH(bench_02, hammer_the_fixed_string)
 {
-  global_pixie_ = moveinmoveout(global_pixie_);
+  global_fixie_ = movein_assign_moveout(global_fixie_, "STRING LITERAL");
 
-  auto local_pixie_ = clean(global_pixie_) ;
+  auto local_pixie_ = clean(global_fixie_) ;
 
   /*
   just a view, therefore data inside is cleaned
+  and both are referencing the same cleaned data
   */
-  assert( global_pixie_[0] == '\0' ) ;
+  assert( global_fixie_[0] == '\0' ) ;
   assert( local_pixie_[0] == '\0' ) ;
 }
 
+// but this one will be compared with the one bellow it
+// the test idea itself is nicked from here:
+// https://en.cppreference.com/w/cpp/string/basic_string_view/find_last_of
 UBENCH(bench_01, fixed_string)
 {
-  // NOTE: ""sv is not user definable
+  // NOTE: ""sv is not user definable, ""_sv is
   using namespace nonstd::literals;
   constexpr auto N = nonstd::string_view::npos;
 
@@ -94,7 +104,6 @@ UBENCH(bench_01, fixed_string)
 }
 
 #include <string_view>
-// https://en.cppreference.com/w/cpp/string/basic_string_view/find_last_of
 UBENCH(bench_01, std_string)
 {
   using namespace std::string_view_literals;
