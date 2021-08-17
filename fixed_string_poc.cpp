@@ -11,6 +11,8 @@ release build result:
 [  PASSED  ]2 benchmarks.
 
 WIN10 PRO, 8GB RAM, on SSD
+/*
+(c) 2021 by dbj@dbj.org
 */
 #include "fixed_string.h"
 #include "ubut/ubench.h"
@@ -128,3 +130,4 @@ int main(int argc, const char *const argv[])
 {
   return ubench_main(argc, argv);
 }
+
