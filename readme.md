@@ -17,6 +17,7 @@ int main (void)
     auto fixie = dbj::fixed_string::make(0xFF) ;
     // exactly the same interface as std::string_view
     // with the added ability to mutate
+    // through only these 3 methods
     fixie[0] = '0';
     fixie.at(1) = '1';
     fixie.data()[2] = '2';
@@ -24,7 +25,7 @@ int main (void)
 }
 ```
 
-- Idea was to re-use the std::string_view  interface and implement it with added ability to muatate the char array referenced
+- Idea was to re-use the std::string_view  interface and implement it with added ability to mutate the char array referenced aka Autoslab.
     - thus there is no new interface to learn and get accustomed to
       - and make bugs while doing it
     - all you can do with `std::string_view` you can do with `dbj::fixed_string`
@@ -34,7 +35,7 @@ int main (void)
     - to achieve that, clang/gcc destructor attribute is used `__attribute__((destructor))`
     - `dbj_collector` is used through one single call
 ```cpp
-// freed on app exit
+// allocate the autoslab of required size; freed on app exit
 return type((char *)dbj_collector_alloc(size_));
 ```
   - dbj_collector uses [utlist](https://github.com/troydhanson/uthash/blob/master/src/utlist.h) part of [troydhanson/uthash](https://github.com/troydhanson/uthash) suite
@@ -43,40 +44,57 @@ return type((char *)dbj_collector_alloc(size_));
     - if there are claims to the contrary please report in issues
   - customized by `string.view.tweak,h`
 
-## But what about ... ?
+## Errors handling policy
+
+- Error handling is a folly
+  - the only effective approach is returns handling
+  - on both sides: returning and receiving.
+- safe and fast code does not exist (and probably never will)
+  - right now if you do silly things with `dbj::fixed_string` bad things will happen in return
+- in the future we/I will provide a separate implementation that wil use [dbj::valstat](https://valstat.github.io/home/)
+  - that will be safe and not-that-fast
+
+## But,but what about ... ?
 
 - Having "better" front end? Notably the one of `std::string` ? 
-  - this is **fixed** string here
-    - you know this and you know you can not just append to it, or adding them fixed string to each other. Get it?
-    - assigning to it has value
-      - just please go ahead and implement that simple function
+  - this is **fixed** string we are developing here
+  - you know you can not just append to it, or adding them fixed string to each other. Right?
+  - on the other hand, assigning to the fixed_string in general has value to **some** users
+  - just please go ahead and implement that simple function for them users who want it
   ```cpp
   // you are more than capable to implement this
-  auto fixie = assign( fixie, "DATA" ) ;
+  /*auto fixie =*/ assign( fixie, "DATA" ) ;
   ```
-    - using std::string API clone would be one much more involved library for dubious gains
-- Using `std::array` or `std::` whatever to implement
+  - Developing std::string API clone would be one much more involved fixed_string library for no obvious gains
+- Using `std::array` or `std::` whatever to implement?
   - that increases the exposure to the `std::` lib
-    - in our books "not a good thing"
+    - in our/my books "not a good thing"
 
 ## NOTES
 
-- This is not tested. Yet. 
-- We value benchmarking over testing. 
+- This is not fully tested. Yet. 
+- We/I use benchmarking as testing. 
   - Benchmarking means it has to work **and** it has to be fast.
   - We use the excellent [UBUT](https://github.com/dbj-data/ubut).
-    - An combination of [ubench / utest](https://github.com/sheredom) 
-- Of course all character types will be catered for. 
-  - In case anybody is using anything else but `char`.
+    - An (almost refactored) combination of [ubench/utest](https://github.com/sheredom) 
+    - Beware: it is developed by me
+      - It is Windows only
+      - It does not work with GCC
+      - It is in pre-beta stage
+- Of course all character types will be catered for 
+  - In case anybody is using anything else but `char`
+- There is a memory safety product called [AUTOSLAB](https://grsecurity.net/how_autoslab_changes_the_memory_unsafety_game), which I did not know about before today.
+  - I use the name here as a catchy phrase for auto-freeing-slab of memory
 
 ## Orthodox C++ and unorthodox C
 
-- We do not use C++ exceptions, RTTI and iostream. Any other std:: usage is kept at minimum, at best.
+- We/I do not use C++ exceptions, RTTI and iostream. 
+   - Any other `std::` usage is kept at minimum, at best.
 - Anything that can be implemented in modern C will be implemented in modern C. 
-   - With all the clang/gnuc extensions available too.
-- Compilers we use are clang-cl and TDM-GCC-64. 
-   - That is revealing us as developing on Windows 10, only.
-- For linux compatibility proof, we (sometimes) offer Godbolt run programs.
+   - With all the `clang`/`gnuc` extensions available too.
+- Compilers we/I use are `clang-cl` and `TDM-GCC-64`. 
+   - That is revealing us/me as developing on Windows 10, only.
+- For linux compatibility proof, we/I (sometimes) offer Godbolt demos.
 
 > &copy; 2021 by dbj@dbj.org 
 
