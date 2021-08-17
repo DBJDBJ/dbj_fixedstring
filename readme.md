@@ -11,12 +11,12 @@ The purpose of this lib is Proof Of Concept aka POC. This is not "industrial str
 
 int main (void)
 {
+    // create and use the "autoslab"
+    // char mem block heap allocated and referenced
+    // and auto freed at app exit
     auto fixie = dbj::fixed_string::make(0xFF) ;
-    // exactly the same
-    // interface as std::string_view
-    // with the ability to mutate the char
-    // block heap allocated and referenced
-    // auto freed at app exit
+    // exactly the same interface as std::string_view
+    // with the added ability to mutate
     fixie[0] = '0';
     fixie.at(1) = '1';
     fixie.data()[2] = '2';
@@ -24,14 +24,15 @@ int main (void)
 }
 ```
 
-- Idea was to re-use the std::string_view  interface and implement it so that the char array referenced can be mutated
+- Idea was to re-use the std::string_view  interface and implement it with added ability to muatate the char array referenced
     - thus there is no new interface to learn and get accustomed to
       - and make bugs while doing it
     - all you can do with `std::string_view` you can do with `dbj::fixed_string`
+      - but not much more
 - Autoslab is delivered by [dbj_collector](dbj_collector.h)
   - char block of required size, is allocated on heap and auto-freed at application exit.  
-    - clang/gcc destructor attribute is used `__attribute__((destructor))`
-    - dbj_collector is used through one call
+    - to achieve that, clang/gcc destructor attribute is used `__attribute__((destructor))`
+    - `dbj_collector` is used through one single call
 ```cpp
 // freed on app exit
 return type((char *)dbj_collector_alloc(size_));
@@ -54,13 +55,12 @@ return type((char *)dbj_collector_alloc(size_));
 
 ## Orthodox C++ and unorthodox C
 
-We do not use C++ exceptions, RTTI and iostream. Any other std:: usage is kept at minimum, at best.
-
-Anything that can be implemented in modern C will be implemented in modern C. With all the clang/gnuc extensions available too.
-
-Compilers we use are clang-cl and TDM-GCC-64. That is revealing us as developing on Windows 10.
-
-For linux compatibility proof, we (sometimes) offer Godbolt run programs.
+- We do not use C++ exceptions, RTTI and iostream. Any other std:: usage is kept at minimum, at best.
+- Anything that can be implemented in modern C will be implemented in modern C. 
+   - With all the clang/gnuc extensions available too.
+- Compilers we use are clang-cl and TDM-GCC-64. 
+   - That is revealing us as developing on Windows 10, only.
+- For linux compatibility proof, we (sometimes) offer Godbolt run programs.
 
 > &copy; 2021 by dbj@dbj.org 
 
