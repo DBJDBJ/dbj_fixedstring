@@ -15,6 +15,8 @@ WIN10 PRO, 8GB RAM, on SSD
 (c) 2021 by dbj@dbj.org
 */
 #include "fixed_string.h"
+
+#define UBENCH_IMPLEMENTATION
 #include "ubut/ubench.h"
 
 // you are more than capable to implement this
@@ -35,10 +37,10 @@ inline dbj::fixed_string assign(dbj::fixed_string fixie, const char (&str)[N]) n
 // move out a copy of the view to the cleanend data
 // the original will reference the same cleaned data slab
 // as the view returned, much like pointers, but with no pointers.
-inline dbj::fixed_string clean(dbj::fixed_string fixie ) noexcept
+inline dbj::fixed_string clean(dbj::fixed_string fixie, char const filler_char = '\0' ) noexcept
 {
   constexpr auto char_zero = '\0';
-  memset(fixie.data(), char_zero, fixie.size());
+  memset(fixie.data(), filler_char, fixie.size());
   return fixie;
 }
 
@@ -59,14 +61,14 @@ UBENCH(bench_02, hammer_the_fixed_string)
 {
   global_fixie_ = movein_assign_moveout(global_fixie_, "STRING LITERAL");
 
-  auto local_pixie_ = clean(global_fixie_) ;
+  auto local_pixie_ = clean(global_fixie_, '?') ;
 
   /*
   just a view, therefore data inside is cleaned
   and both are referencing the same cleaned data
   */
-  assert( global_fixie_[0] == '\0' ) ;
-  assert( local_pixie_[0] == '\0' ) ;
+  assert( global_fixie_[0] == '?' ) ;
+  assert( local_pixie_[0] == '?' ) ;
 }
 
 // but this one will be compared with the one bellow it

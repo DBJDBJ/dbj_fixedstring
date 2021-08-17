@@ -33,6 +33,10 @@ struct dbj_collector_ *dbj_collector_global = 0;
 
 void *dbj_collector_alloc(size_t);
 
+// BEWARE: this frees all the autoblocks allocated
+// this is destructor called at app exit
+void dbj_collector_destruct(void);
+
 // TBD: void * dbj_collector_free ( void * );
 
 #ifdef DBJ_COLLECTOR_IMP
