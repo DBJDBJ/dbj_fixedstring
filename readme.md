@@ -38,6 +38,22 @@ return type((char *)dbj_collector_alloc(size_));
     - if there are claims to the contrary please report in issues
   - customized by `string.view.tweak,h`
 
+## But what about ... ?
+
+- Having "better" front end? Notably the one of `std::string` ? 
+  - this is **fixed** string here
+    - you know this and you know you can not just append to it, or adding them fixed string to each other. Get it?
+    - assigning to it has value
+      - just please go ahead and implement that simple function
+  ```cpp
+  // you are more than capable to implement this
+  auto fixie = assign( fixie, "DATA" ) ;
+  ```
+    - using std::string API clone would be one much more involved library for dubious gains
+- Using `std::array` or `std::` whatever to implement
+  - that increases the exposure to the `std::` lib
+    - in our books "not a good thing"
+
 ## NOTES
 
 - This is not tested. Yet. 
