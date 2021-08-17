@@ -445,6 +445,7 @@ I use this like so:
 
 #if nssv_CPP11_OR_GREATER
 # include <type_traits>
+// # include "dbj_nonstd_typetraits.h"
 #endif
 
 // Clang, GNUC, MSVC warning suppression macros:
