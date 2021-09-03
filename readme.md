@@ -1,15 +1,12 @@
 # DBJ FIXED_STRING<!-- omit in toc -->
-### [License][LICENSE_DBJ]
-![](unsplash/work_in_progres_raw.jpg)
-
 
 - [Fixed string with string_view front end.](#fixed-string-with-string_view-front-end)
   - [Errors handling policy](#errors-handling-policy)
   - [But,but, what about ... ?](#butbut-what-about--)
   - [NOTES](#notes)
-  - [Orthodox C++ and unorthodox C](#orthodox-c-and-unorthodox-c)
-  - [Building](#building)
-  - [Debugging](#debugging)
+- [Orthodox C++ and unorthodox C](#orthodox-c-and-unorthodox-c)
+- [Building](#building)
+- [Debugging](#debugging)
   
 # &nbsp;<!-- omit in toc -->
 
@@ -85,21 +82,18 @@ return type((char *)dbj_collector_alloc(size_));
 
 ## NOTES
 
-- This is not fully tested. Yet. 
-- We/I use benchmarking as testing. 
-  - Benchmarking means it has to work **and** it has to be fast.
-  - We use the excellent [UBUT](https://github.com/dbj-data/ubut).
-    - An (almost refactored) combination of [ubench/utest](https://github.com/sheredom) 
-    - Beware: it is developed by me
+- We use the excellent [UBUT](https://github.com/dbj-data/ubut).
+  - An (almost refactored) combination of [ubench/utest](https://github.com/sheredom) 
+  - Beware: it is developed by me
       - It is Windows only
-      - It does not work with GCC
+      - It is not guaranteed to work with GCC
       - It is in pre-beta stage
 - Of course all character types will be catered for 
   - In case anybody is using anything else but `char`
 - There is a memory safety product called [AUTOSLAB](https://grsecurity.net/how_autoslab_changes_the_memory_unsafety_game), which I did not know about before today.
   - I use the name here as a catchy phrase for auto-freeing-slab of memory
 
-## Orthodox C++ and unorthodox C
+# Orthodox C++ and unorthodox C
 
 - We/I do not use C++ exceptions, RTTI and iostream. 
    - Any other `std::` usage is kept at minimum, at best.
@@ -109,15 +103,14 @@ return type((char *)dbj_collector_alloc(size_));
    - That is revealing us/me as developing on Windows 10, only.
 - For linux compatibility proof, we/I (sometimes) offer Godbolt demos.
 
-## Building
+# Building
 - `clang-cl` is mandatory
 - C++17 is mandatory
 - use `build_fixed_string_poc.cmd`
 - output goes to the `bin` folder
-## Debugging
+# Debugging
 - position yourself on the `fixed_string_poc.cpp`
 - goto debugger and start debugging
 
 > &copy; 2021 by dbj@dbj.org 
-
-[LICENSE_DBJ]: (https://dbj.org/license_dbj/)
+[LICENSE_DBJ](https://dbj.org/license_dbj/) 
