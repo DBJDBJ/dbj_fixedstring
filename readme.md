@@ -1,10 +1,23 @@
-# DBJ FIXED_STRING
+# DBJ FIXED_STRING<!-- omit in toc -->
+### [License][LICENSE_DBJ]
+![](unsplash/work_in_progres_raw.jpg)
 
-## Caveat Emptor ("Let the Buyer beware")
+
+- [Fixed string with string_view front end.](#fixed-string-with-string_view-front-end)
+  - [Errors handling policy](#errors-handling-policy)
+  - [But,but, what about ... ?](#butbut-what-about--)
+  - [NOTES](#notes)
+  - [Orthodox C++ and unorthodox C](#orthodox-c-and-unorthodox-c)
+  - [Building](#building)
+  - [Debugging](#debugging)
+  
+# &nbsp;<!-- omit in toc -->
+
+> Caveat Emptor ("Let the Buyer beware")
 
 The purpose of this lib is Proof Of Concept aka POC. This is not "industrial strength" , "drop in replacement" (to what?) It is simply an POC.
 
-### Fixed string with string_view front end.
+# Fixed string with string_view front end.
 
 ```cpp
 #include <fixed_string.h>
@@ -54,7 +67,7 @@ return type((char *)dbj_collector_alloc(size_));
 - in the future we/I will provide a separate implementation that wil use [dbj::valstat](https://valstat.github.io/home/)
   - that will be safe and not-that-fast
 
-## But,but what about ... ?
+## But,but, what about ... ?
 
 - Having "better" front end? Notably the one of `std::string` ? 
   - this is **fixed** string we are developing here
@@ -96,6 +109,15 @@ return type((char *)dbj_collector_alloc(size_));
    - That is revealing us/me as developing on Windows 10, only.
 - For linux compatibility proof, we/I (sometimes) offer Godbolt demos.
 
+## Building
+- `clang-cl` is mandatory
+- C++17 is mandatory
+- use `build_fixed_string_poc.cmd`
+- output goes to the `bin` folder
+## Debugging
+- position yourself on the `fixed_string_poc.cpp`
+- goto debugger and start debugging
+
 > &copy; 2021 by dbj@dbj.org 
 
-[LICENSE DBJ](https://dbj.org/license_dbj/)
+[LICENSE_DBJ]: (https://dbj.org/license_dbj/)

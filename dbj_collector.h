@@ -3,12 +3,12 @@
 /*
 (c) 2021 by dbj@dbj.org
 
-Collect the pointers to the blocks allocated. Free them on app exit.
+Collect the blocks allocated. Free them on app exit.
 
-NOTE! Must #defin DBJ_COLLECTOR_IMP before this file on exactly one ocassion
+NOTE! Must #define DBJ_COLLECTOR_IMP before this file on exactly one ocassion
 */
 
-#include "../uthash/src/utlist.h"
+#include "uthash/src/utlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -37,7 +37,13 @@ void *dbj_collector_alloc(size_t);
 // this is destructor called at app exit
 void dbj_collector_destruct(void);
 
-// TBD: void * dbj_collector_free ( void * );
+// find a node and delete it
+// if not found return false
+// true otherwise
+// CaveatEmptor: this is very dangerous as there can be many 
+//               holders of this pointer
+//               Use with extreme caution!
+bool dbj_collector_free ( void * );
 
 #ifdef DBJ_COLLECTOR_IMP
 
@@ -62,10 +68,28 @@ void *dbj_collector_alloc(size_t size_)
     return 0;
 }
 
+bool dbj_collector_free ( void * block_pointer )
+{
+    if (! block_pointer ) return false ;
+
+    dbj_collector_node *node, *tmp = 0;
+
+    DL_FOREACH_SAFE(dbj_collector_global, node, tmp)
+    {
+        if ( block_pointer == (void*)node->block ){
+        DL_DELETE(dbj_collector_global, node);
+        free(node);
+        return true ;
+        }
+    }
+    return false ;
+}
+
 #if defined(__clang__) || defined(__GNUC__)
 #define DBJ_COLLECTOR_DESTRUCTOR __attribute__((destructor))
 #elif defined(_MSC_VER)
 #define DBJ_COLLECTOR_DESTRUCTOR
+#pragma message("Please make sure dbj_collector_destruct() is called on exit.")
 #else // _MSC_VER
 #error Unknown compiler ...
 #endif

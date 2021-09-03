@@ -37,10 +37,10 @@ inline dbj::fixed_string assign(dbj::fixed_string fixie, const char (&str)[N]) n
 // move out a copy of the view to the cleanend data
 // the original will reference the same cleaned data slab
 // as the view returned, much like pointers, but with no pointers.
-inline dbj::fixed_string clean(dbj::fixed_string fixie, char const filler_char = '\0' ) noexcept
+inline dbj::fixed_string clean(dbj::fixed_string fixie, char const filler_char = char(0) ) noexcept
 {
-  constexpr auto char_zero = '\0';
-  memset(fixie.data(), filler_char, fixie.size());
+  constexpr auto char_zero = char(0);
+  memset(fixie.data(), (filler_char ? filler_char : char_zero) , fixie.size());
   return fixie;
 }
 
@@ -69,6 +69,14 @@ UBENCH(bench_02, hammer_the_fixed_string)
   */
   assert( global_fixie_[0] == '?' ) ;
   assert( local_pixie_[0] == '?' ) ;
+
+  global_fixie_.erase() ;
+
+  bool e1 = global_fixie_.empty() ;
+  bool e2 = local_pixie_.empty() ;
+
+  assert( e1 == e2 );
+
 }
 
 // but this one will be compared with the one bellow it
@@ -108,6 +116,7 @@ UBENCH(bench_01, fixed_string)
 #include <string_view>
 UBENCH(bench_01, std_string)
 {
+  using namespace std::literals;
   using namespace std::string_view_literals;
   constexpr auto N = std::string_view::npos;
 

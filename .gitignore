@@ -6,3 +6,4 @@ keystat.*
 *.exe
 *.ilk
 *.pdb
+*.obj

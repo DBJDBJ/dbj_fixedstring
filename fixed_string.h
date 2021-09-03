@@ -29,9 +29,13 @@ NOTE: what I do not do is inherit for implementation. Which I have done here :wi
 namespace dbj
 {
 
-    struct fixed_string final : public nonstd::string_view
+    class fixed_string final : public nonstd::string_view
     {
+        nssv_constexpr fixed_string () nssv_noexcept
+        : nonstd::string_view()
+        {}
 
+    public:
         using type = fixed_string;
         using parent_type = nonstd::string_view;
         using value_type = typename parent_type::value_type;
@@ -57,7 +61,6 @@ namespace dbj
         {
             return type((char *)dbj_collector_alloc(size_), size_);
         }
-
     }; // fixed_string
 
 } // dbj NS
