@@ -16,8 +16,8 @@ WIN10 PRO, 8GB RAM, on SSD
 */
 #include "fixed_string.h"
 
-#define UBENCH_IMPLEMENTATION
-#include "ubut/ubench.h"
+#define UTEST_IMPLEMENTATION
+#include "ubut/utest.h"
 
 // you are more than capable to implement this
 // auto fixie = assign( fixie, "DATA" ) ;
@@ -57,7 +57,7 @@ inline auto movein_assign_moveout (FT_ fixie_, const char (&data_)[N] )
 
 // remember: we benchmark abnd develop in the same time,
 // thus in here we do not compare 
-UBENCH(bench_02, hammer_the_fixed_string)
+UTEST(bench_02, hammer_the_fixed_string)
 {
   global_fixie_ = movein_assign_moveout(global_fixie_, "STRING LITERAL");
 
@@ -67,22 +67,20 @@ UBENCH(bench_02, hammer_the_fixed_string)
   just a view, therefore data inside is cleaned
   and both are referencing the same cleaned data
   */
-  assert( global_fixie_[0] == '?' ) ;
-  assert( local_pixie_[0] == '?' ) ;
-
-  global_fixie_.erase() ;
+  EXPECT_TRUE( global_fixie_[0] == '?' ) ;
+  EXPECT_TRUE( local_pixie_[0] == '?' ) ;
 
   bool e1 = global_fixie_.empty() ;
   bool e2 = local_pixie_.empty() ;
 
-  assert( e1 == e2 );
+  EXPECT_TRUE( e1 == e2 );
 
 }
 
 // but this one will be compared with the one bellow it
 // the test idea itself is nicked from here:
 // https://en.cppreference.com/w/cpp/string/basic_string_view/find_last_of
-UBENCH(bench_01, fixed_string)
+UTEST(bench_01, fixed_string)
 {
   // NOTE: ""sv is not user definable, ""_sv is
   using namespace nonstd::literals;
@@ -111,10 +109,11 @@ UBENCH(bench_01, fixed_string)
       //     └─────────────────────────┘
       N == "namespace"_sv.find_last_of("cdef", 3 /* pos [0..3]: "name" */, 2 /* "cd" */))
     all_ok = true;
+        EXPECT_TRUE(all_ok);
 }
 
 #include <string_view>
-UBENCH(bench_01, std_string)
+UTEST(bench_01, std_string)
 {
   using namespace std::literals;
   using namespace std::string_view_literals;
@@ -143,11 +142,12 @@ UBENCH(bench_01, std_string)
       //     └─────────────────────────┘
       N == "namespace"sv.find_last_of("cdef", 3 /* pos [0..3]: "name" */, 2 /* "cd" */))
     all_ok = true;
+    EXPECT_TRUE(all_ok);
 }
 
-UBENCH_STATE; // note there is no ()!
+UTEST_STATE; // note there is no ()!
 int main(int argc, const char *const argv[])
 {
-  return ubench_main(argc, argv);
+  return utest_main(argc, argv);
 }
 
