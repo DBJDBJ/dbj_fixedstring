@@ -8,7 +8,7 @@ Collect the blocks allocated. Free them on app exit.
 NOTE! Must #define DBJ_COLLECTOR_IMP before this file on exactly one ocassion
 */
 
-#include "uthash/src/utlist.h"
+#include <uthash/utlist.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

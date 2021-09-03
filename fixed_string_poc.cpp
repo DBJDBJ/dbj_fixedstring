@@ -14,6 +14,7 @@ WIN10 PRO, 8GB RAM, on SSD
 
 (c) 2021 by dbj@dbj.org
 */
+#define STB_DS_IMPLEMENTATION
 #include "fixed_string.h"
 
 #define UTEST_IMPLEMENTATION
