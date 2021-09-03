@@ -1,6 +1,0 @@
-[submodule "uthash"]
-	path = uthash
-	url = https://github.com/troydhanson/uthash.git
-[submodule "ubut"]
-	path = ubut
-	url = https://github.com/dbj-data/ubut.git
