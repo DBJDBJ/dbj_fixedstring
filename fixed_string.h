@@ -17,11 +17,11 @@ NOTE: what I do not do is inherit for implementation. Which I have done here :wi
 // and  string_view.tweak.h
 
 #ifdef __has_include
-# if __has_include("string_view.tweak.h")
-#  include "string_view.tweak.h"
-# else
-#  error string_view.tweak.h missing
-# endif
+#if __has_include("string_view.tweak.h")
+#include "string_view.tweak.h"
+#else
+#error string_view.tweak.h missing
+#endif
 #endif // __has_include
 
 #include "string_view_stand_alone.h"
@@ -31,16 +31,17 @@ namespace dbj
 
     class fixed_string final : public nonstd::string_view
     {
-        nssv_constexpr fixed_string () nssv_noexcept
-        : nonstd::string_view()
-        {}
+        nssv_constexpr fixed_string() nssv_noexcept
+            : nonstd::string_view()
+        {
+        }
 
     public:
         using type = fixed_string;
         using parent_type = nonstd::string_view;
         using value_type = typename parent_type::value_type;
 
-        fixed_string(char *slab_, size_type count_ ) noexcept : parent_type(slab_, count_) {}
+        fixed_string(char *slab_, size_type count_) noexcept : parent_type(slab_, count_) {}
 
         typename parent_type::reference operator[](unsigned idx_) noexcept
         {
@@ -60,6 +61,33 @@ namespace dbj
         static type make(unsigned size_) noexcept
         {
             return type((char *)dbj_collector_alloc(size_), size_);
+        }
+
+        template <size_t N>
+        type &assign(const char (&str)[N]) noexcept
+        {
+            assert(N < this->size());
+#ifndef NDEBUG
+            int rez =
+#endif
+                // not parent data()
+                memcpy_s(this->type::data(), this->size(), str, N);
+            assert(rez == 0);
+            return *this;
+        }
+
+        // Beware
+        //
+        // fixed_string is a view to the slab it references
+        // it is not an exclusive owner of it, here we clean it and
+        // move out a copy of the view to the cleanend data
+        // the original will reference the same cleaned data slab
+        // as the view returned, much like pointers, but with no pointers.
+        type & clean(char const filler_char = char(0)) noexcept
+        {
+            constexpr auto char_zero = char(0);
+            memset(this->type::data(), (filler_char ? filler_char : char_zero), this->size());
+            return *this;
         }
     }; // fixed_string
 

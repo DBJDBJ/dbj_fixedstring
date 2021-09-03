@@ -2,13 +2,13 @@
 /*
 release build result:
 
-[----------]Running 2 benchmarks.
-[ RUN      ]bench_01.fixed_string
-[      OK  ]bench_01.fixed_string (mean 0.032us, confidence interval +- 16.793465%)
-[ RUN      ]bench_01.std_string
-[      OK  ]bench_01.std_string (mean 0.034us, confidence interval +- 16.073550%)
-[----------]2 benchmarks ran.
-[  PASSED  ]2 benchmarks.
+[----------]Running 2 testmarks.
+[ RUN      ]test_01.fixed_string
+[      OK  ]test_01.fixed_string (mean 0.032us, confidence interval +- 16.793465%)
+[ RUN      ]test_01.std_string
+[      OK  ]test_01.std_string (mean 0.034us, confidence interval +- 16.073550%)
+[----------]2 testmarks ran.
+[  PASSED  ]2 testmarks.
 
 WIN10 PRO, 8GB RAM, on SSD
 
@@ -17,32 +17,11 @@ WIN10 PRO, 8GB RAM, on SSD
 #include "fixed_string.h"
 
 #define UTEST_IMPLEMENTATION
-#include "ubut/utest.h"
+// see .vscode/c_cpp_properties.json
+// see  build-fixed-string-poc.cmd
+#include <ubut/utest.h>
 
-// you are more than capable to implement this
-// auto fixie = assign( fixie, "DATA" ) ;
-template <size_t N>
-inline dbj::fixed_string assign(dbj::fixed_string fixie, const char (&str)[N]) noexcept
-{
-  assert(N < fixie.size());
-  int rez = memcpy_s(fixie.data(), fixie.size(), str, N);
-  assert(rez == 0);
-  return fixie;
-}
 
-// Behavioral advice
-//
-// fixed_string is a view to the slab it references
-// it is not an exclusive owner of it, here we clean it and 
-// move out a copy of the view to the cleanend data
-// the original will reference the same cleaned data slab
-// as the view returned, much like pointers, but with no pointers.
-inline dbj::fixed_string clean(dbj::fixed_string fixie, char const filler_char = char(0) ) noexcept
-{
-  constexpr auto char_zero = char(0);
-  memset(fixie.data(), (filler_char ? filler_char : char_zero) , fixie.size());
-  return fixie;
-}
 
 // one is perhaps enough
 // remember you are NOT supposed to free Fixie data
@@ -52,16 +31,14 @@ inline auto global_fixie_ = dbj::fixed_string::make(0xFF);
 template <typename FT_ , size_t N>
 inline auto movein_assign_moveout (FT_ fixie_, const char (&data_)[N] )
 {
-  return assign(fixie_, data_);
+  return fixie_.assign(data_);
 };
 
-// remember: we benchmark abnd develop in the same time,
-// thus in here we do not compare 
-UTEST(bench_02, hammer_the_fixed_string)
+UTEST(test_02, hammer_the_fixed_string)
 {
   global_fixie_ = movein_assign_moveout(global_fixie_, "STRING LITERAL");
 
-  auto local_pixie_ = clean(global_fixie_, '?') ;
+  auto local_pixie_ = global_fixie_.clean('?') ;
 
   /*
   just a view, therefore data inside is cleaned
@@ -80,7 +57,7 @@ UTEST(bench_02, hammer_the_fixed_string)
 // but this one will be compared with the one bellow it
 // the test idea itself is nicked from here:
 // https://en.cppreference.com/w/cpp/string/basic_string_view/find_last_of
-UTEST(bench_01, fixed_string)
+UTEST(test_01, fixed_string)
 {
   // NOTE: ""sv is not user definable, ""_sv is
   using namespace nonstd::literals;
@@ -113,7 +90,7 @@ UTEST(bench_01, fixed_string)
 }
 
 #include <string_view>
-UTEST(bench_01, std_string)
+UTEST(test_01, std_string)
 {
   using namespace std::literals;
   using namespace std::string_view_literals;
