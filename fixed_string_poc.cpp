@@ -29,8 +29,8 @@ WIN10 PRO, 8GB RAM, on SSD
 // it stays in the memory untill the very end
 inline auto global_fixie_ = dbj::fixed_string::make(0xFF);
 
-template <typename FT_ , size_t N>
-inline auto movein_assign_moveout (FT_ fixie_, const char (&data_)[N] )
+template <typename VECTOR_ , size_t N>
+inline auto movein_assign_moveout (VECTOR_ fixie_, const char (&data_)[N] )
 {
   return fixie_.assign(data_);
 };
