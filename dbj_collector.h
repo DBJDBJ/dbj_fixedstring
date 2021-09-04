@@ -8,28 +8,13 @@ Collect the blocks allocated. Free them on app exit.
 NOTE! Must #define DBJ_COLLECTOR_IMP before this file on exactly one ocassion
 */
 
-#include <uthash/utlist.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <errno.h>
+#ifndef DBJ_EXTERN_C_BEGIN
+#include <dbj_capi/ccommon.h>
+#endif
 
-#ifndef __clang__
-#ifndef __GNUC__
-#error Please use clang or GCC compilers
-#endif // __GNUC__
-#endif // __clang__
-
-/*-----------------------------------------------------------------*/
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-    /*-----------------------------------------------------------------*/
-
+DBJ_EXTERN_C_BEGIN
 // the API
 struct dbj_collector_;
-struct dbj_collector_ *dbj_collector_global = 0;
 
 void *dbj_collector_alloc(size_t);
 
@@ -45,22 +30,42 @@ void dbj_collector_destruct(void);
 //               Use with extreme caution!
 bool dbj_collector_free ( void * );
 
+DBJ_EXTERN_C_END
+
+////////////////////////////////////////////////////////////////////////////////////
 #ifdef DBJ_COLLECTOR_IMP
+
+#include "vector/vector.h"
+
+DBJ_EXTERN_C_BEGIN
+
+enum  { DBJ_COLLECTOR_INIT_SZE = 0xFF ,DBJ_COLLECTOR_INIT_CCTY = DBJ_COLLECTOR_INIT_SZE * 2 } ;
 
 typedef struct dbj_collector_
 {
-    struct dbj_collector_ *next, *prev;
     unsigned char block[];
 } dbj_collector_node;
 
-// return 0 on ENOMEM and sets errno to ENOMEM
+// not thread safe. yet.
+ dbj_vector_t *dbj_collector_vector (void) {
+         static dbj_vector_t * vector_ = create_vector( DBJ_COLLECTOR_INIT_SZE, DBJ_COLLECTOR_INIT_CCTY) ;
+         DBJ_ASSERT(vector_);
+    return vector_ ;
+}
+
+//  on ENOMEM sets errno to ENOMEM and returns 0
 void *dbj_collector_alloc(size_t size_)
 {
-    dbj_collector_node *new_node = (dbj_collector_node *)calloc(1, sizeof(dbj_collector_node) + sizeof(unsigned char[size_]));
+    dbj_collector_node *new_node = 
+    (dbj_collector_node *)calloc(1, sizeof(dbj_collector_node) + sizeof(unsigned char[size_]));
 
     if (new_node)
     {
-        DL_APPEND(dbj_collector_global, new_node);
+                    #ifndef NDEBUG
+            int rez =
+            #endif
+        vector_push(dbj_collector_vector(), new_node);
+        DBJ_ASSERT(DBJ_VCTR_IS_SUCCESS(rez)) ;
         return new_node->block;
     }
 
@@ -68,17 +73,25 @@ void *dbj_collector_alloc(size_t size_)
     return 0;
 }
 
+// Again: use with caution!
 bool dbj_collector_free ( void * block_pointer )
 {
     if (! block_pointer ) return false ;
 
-    dbj_collector_node *node, *tmp = 0;
-
-    DL_FOREACH_SAFE(dbj_collector_global, node, tmp)
+    const size_t size_ = vector_size( dbj_collector_vector() );
+    dbj_collector_node *node_ = 0 ;
+    for( size_t k = 0; k < size_; ++k )
     {
-        if ( block_pointer == (void*)node->block ){
-        DL_DELETE(dbj_collector_global, node);
-        free(node);
+        node_ = (dbj_collector_node *) vector_at( dbj_collector_vector(), k );
+        DBJ_ASSERT(node_);
+        if( (void *)node_->block == block_pointer )
+        {
+            #ifndef NDEBUG
+            int rez =
+            #endif
+            vector_erase(dbj_collector_vector(), k);
+            DBJ_ASSERT(DBJ_VCTR_IS_SUCCESS(rez)) ;
+            free(node_);
         return true ;
         }
     }
@@ -96,24 +109,29 @@ bool dbj_collector_free ( void * block_pointer )
 
 DBJ_COLLECTOR_DESTRUCTOR void dbj_collector_destruct(void)
 {
-    dbj_collector_node *node = 0, *tmp = 0;
-    DL_FOREACH_SAFE(dbj_collector_global, node, tmp)
+    const size_t size_ = vector_size( dbj_collector_vector() );
+    dbj_collector_node *node_ = 0 ;
+    for( size_t k = 0; k < size_; ++k )
     {
-        DL_DELETE(dbj_collector_global, node);
-        free(node);
+        node_ = (dbj_collector_node *) vector_at( dbj_collector_vector(), k );
+        DBJ_ASSERT(node_);
+            #ifndef NDEBUG
+            int rez =
+            #endif
+            vector_erase(dbj_collector_vector(), k);
+            DBJ_ASSERT(DBJ_VCTR_IS_SUCCESS(rez)) ;
+            free(node_);
     }
-
-    dbj_collector_global = 0;
+    vector_clear(dbj_collector_vector()) ;
 }
 
 #undef DBJ_COLLECTOR_DESTRUCTOR
 
-#endif // DBJ_COLLECTOR_IMP
+DBJ_EXTERN_C_END
 
-/*-----------------------------------------------------------------*/
-#ifdef __cplusplus
-} extern "C"
-#endif // __cplusplus
-    /*-----------------------------------------------------------------*/
+#endif // DBJ_COLLECTOR_IMP
+////////////////////////////////////////////////////////////////////////////////////
+
+
 
 #endif // DBJ_COLLECTOR_INC

@@ -14,7 +14,9 @@ WIN10 PRO, 8GB RAM, on SSD
 
 (c) 2021 by dbj@dbj.org
 */
-#define STB_DS_IMPLEMENTATION
+
+#define DBJ_COLLECTOR_IMP 
+// #define STB_DS_IMPLEMENTATION
 #include "fixed_string.h"
 
 #define UTEST_IMPLEMENTATION
@@ -29,8 +31,8 @@ WIN10 PRO, 8GB RAM, on SSD
 // it stays in the memory untill the very end
 inline auto global_fixie_ = dbj::fixed_string::make(0xFF);
 
-template <typename VECTOR_ , size_t N>
-inline auto movein_assign_moveout (VECTOR_ fixie_, const char (&data_)[N] )
+template <typename DBJ_VCTR_ , size_t N>
+inline auto movein_assign_moveout (DBJ_VCTR_ fixie_, const char (&data_)[N] )
 {
   return fixie_.assign(data_);
 };

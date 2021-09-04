@@ -10,7 +10,7 @@ NOTE: what I do not do is inherit for implementation. Which I have done here :wi
 
 */
 
-#define DBJ_COLLECTOR_IMP
+// requires #define DBJ_COLLECTOR_IMP in one compilation unit 
 #include "dbj_collector.h"
 
 // Please see https://github.com/martinmoene/string-view-lite#configuration

@@ -2,15 +2,18 @@
 #define _CRT_SECURE_NO_WARNINGS /* To disable warnings for unsafe functions */
 #endif
 
+/*
+    2021 SEP 04     DBJ     This is now "under" dbj_capi/ccommon.h
+*/
 #include "vector.h"
-#include <crtdbg.h>
-#include <string.h>
-#include <stdlib.h>
+// #include <crtdbg.h>
+// #include <string.h>
+// #include <stdlib.h>
 
+#undef MAX
+#undef MIN
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
-
-#define VECTOR_ASSERT _ASSERTE
 
 struct dbj_vector {
     size_t m_size;
@@ -22,8 +25,8 @@ struct dbj_vector {
 
 static int vector_reallocate_(dbj_vector_t *vector, size_t new_capacity)
 {
-    VECTOR_ASSERT(vector);
-    VECTOR_ASSERT(new_capacity > vector->m_capacity);
+    DBJ_ASSERT(vector);
+    DBJ_ASSERT(new_capacity > vector->m_capacity);
 
     size_t new_size = new_capacity * vector->m_item_size;
     vector->m_data = realloc(vector->m_data, new_size);
@@ -33,7 +36,7 @@ static int vector_reallocate_(dbj_vector_t *vector, size_t new_capacity)
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 dbj_vector_t *create_vector(size_t item_size, size_t capacity)
 {
    dbj_vector_t *vector = (dbj_vector_t *)malloc(sizeof(dbj_vector_t));
@@ -56,40 +59,40 @@ dbj_vector_t *create_vector(size_t item_size, size_t capacity)
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 void destroy_vector(dbj_vector_t *vector)
 {
-    VECTOR_ASSERT(vector);
+    DBJ_ASSERT(vector);
     free(vector->m_data);
     free(vector);
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 size_t vector_size(const dbj_vector_t *vector)
 {
-    VECTOR_ASSERT(vector);
+    DBJ_ASSERT(vector);
     return vector->m_size;
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 size_t vector_capacity(const dbj_vector_t *vector)
 {
-    VECTOR_ASSERT(vector);
+    DBJ_ASSERT(vector);
     return vector->m_capacity;
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 int vector_push(dbj_vector_t *vector, const void *item)
 {
-    VECTOR_ASSERT(vector);
-    VECTOR_ASSERT(item);
+    DBJ_ASSERT(vector);
+    DBJ_ASSERT(item);
 
     if (vector->m_size == vector->m_capacity) {
         if (vector_reallocate_(vector, vector->m_capacity * 2) == -1)
-            return VECTOR_GEN_ERROR;
+            return DBJ_VCTR_GEN_ERROR;
         vector->m_capacity = vector->m_capacity * 2;
     }
 
@@ -98,18 +101,18 @@ int vector_push(dbj_vector_t *vector, const void *item)
 
     ++(vector->m_size);
 
-    return VECTOR_SUCCESS;
+    return DBJ_VCTR_SUCCESS;
 }
 
-VECTOR_API
+DBJ_VCTR_API
 int vector_insert(dbj_vector_t *vector, const void *item, size_t pos)
 {
-    VECTOR_ASSERT(vector);
-    VECTOR_ASSERT(item);
+    DBJ_ASSERT(vector);
+    DBJ_ASSERT(item);
     size_t needed_capacity = MAX(pos + 1, vector->m_size + 1);
     if (vector->m_capacity < needed_capacity) {
         if (vector_reallocate_(vector, needed_capacity) == -1)
-            return VECTOR_GEN_ERROR;
+            return DBJ_VCTR_GEN_ERROR;
         vector->m_capacity = needed_capacity;
     }
     size_t offset = pos * vector->m_item_size;
@@ -117,7 +120,7 @@ int vector_insert(dbj_vector_t *vector, const void *item, size_t pos)
         /* Data in the middle are not initialized */
         memcpy((char *)vector->m_data + offset, item, vector->m_item_size);
         vector->m_size = pos + 1;
-        return VECTOR_SUCCESS;
+        return DBJ_VCTR_SUCCESS;
     } else {
         /* Shift following data by one position */
         memmove((char *)vector->m_data + offset + vector->m_item_size,
@@ -125,11 +128,11 @@ int vector_insert(dbj_vector_t *vector, const void *item, size_t pos)
                 vector->m_item_size * (vector->m_size - pos));
         memcpy((char *)vector->m_data + offset, item, vector->m_item_size);
         ++(vector->m_size);
-        return VECTOR_SUCCESS;
+        return DBJ_VCTR_SUCCESS;
     }
 }
 
-VECTOR_API
+DBJ_VCTR_API
 dbj_vector_t *vector_split(dbj_vector_t *vector, size_t pos)
 {
     size_t trailing_sz = vector->m_size > pos ? vector->m_size - pos : 0;
@@ -152,7 +155,7 @@ dbj_vector_t *vector_split(dbj_vector_t *vector, size_t pos)
     return new_vector;
 }
 
-VECTOR_API
+DBJ_VCTR_API
 const void *vector_at_c(const dbj_vector_t *vector, size_t index)
 {
     if (index >= vector->m_size)
@@ -162,7 +165,7 @@ const void *vector_at_c(const dbj_vector_t *vector, size_t index)
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 void *vector_at(dbj_vector_t *vector, size_t index)
 {
     if (index >= vector->m_size)
@@ -172,24 +175,24 @@ void *vector_at(dbj_vector_t *vector, size_t index)
 }
 
 
-VECTOR_API
+DBJ_VCTR_API
 dbj_status vector_swap(dbj_vector_t *cur_vec,dbj_vector_t *mv_vec, size_t pos)
 {
-    VECTOR_ASSERT(cur_vec);
-    VECTOR_ASSERT(mv_vec);
-    VECTOR_ASSERT(cur_vec != mv_vec);
-    VECTOR_ASSERT(cur_vec->m_item_size == mv_vec->m_item_size);
+    DBJ_ASSERT(cur_vec);
+    DBJ_ASSERT(mv_vec);
+    DBJ_ASSERT(cur_vec != mv_vec);
+    DBJ_ASSERT(cur_vec->m_item_size == mv_vec->m_item_size);
 
     size_t cur_sz = vector_size(cur_vec);
     size_t mv_sz = vector_size(mv_vec);
     if (mv_sz == 0) {
-        return VECTOR_SUCCESS;
+        return DBJ_VCTR_SUCCESS;
     }
 
     size_t min_targ_size = pos + mv_sz;
     if (vector_capacity(cur_vec) < min_targ_size) {
         if (vector_reallocate_(cur_vec, min_targ_size) == -1)
-            return VECTOR_GEN_ERROR;
+            return DBJ_VCTR_GEN_ERROR;
         cur_vec->m_capacity = min_targ_size;
     }
 
@@ -200,7 +203,7 @@ dbj_status vector_swap(dbj_vector_t *cur_vec,dbj_vector_t *mv_vec, size_t pos)
         new_mv_sz = MIN(cur_sz - pos, mv_sz);
         tmp = malloc(cur_vec->m_item_size * new_mv_sz);
         if (tmp == NULL) {
-            return VECTOR_MEMORY_ERROR;
+            return DBJ_VCTR_MEMORY_ERROR;
         }
     }
 
@@ -223,31 +226,31 @@ dbj_status vector_swap(dbj_vector_t *cur_vec,dbj_vector_t *mv_vec, size_t pos)
     cur_vec->m_size = MAX(cur_vec->m_size, min_targ_size);
     mv_vec->m_size = new_mv_sz;
     free(tmp);
-    return VECTOR_SUCCESS;
+    return DBJ_VCTR_SUCCESS;
 }
 
-VECTOR_API
+DBJ_VCTR_API
 void vector_clear(dbj_vector_t *vector)
 {
     vector->m_size = 0;
 }
 
-VECTOR_API
+DBJ_VCTR_API
 int vector_erase(dbj_vector_t *vector, size_t index)
 {
-    VECTOR_ASSERT(vector);
+    DBJ_ASSERT(vector);
 
     if (vector->m_size == 0 || index >= vector->m_size)
-        return VECTOR_GEN_ERROR;
+        return DBJ_VCTR_GEN_ERROR;
 
     memmove((char *)vector->m_data + vector->m_item_size * index,
             (char *)vector->m_data + vector->m_item_size * (index + 1),
             (vector->m_size - 1 - index) * vector->m_item_size);
     vector->m_size--;
-    return VECTOR_SUCCESS;
+    return DBJ_VCTR_SUCCESS;
 }
 
-#ifdef VECTOR_TEST_BUILD
+#ifdef DBJ_VCTR_TEST_BUILD
 
 dbj_vector_t *copy_vector(dbj_vector_t *v)
 {
@@ -266,8 +269,8 @@ dbj_vector_t *copy_vector(dbj_vector_t *v)
 
 size_t vector_index_of(const dbj_vector_t *vector, const void *item)
 {
-    VECTOR_ASSERT(vector);
-    VECTOR_ASSERT(item);
+    DBJ_ASSERT(vector);
+    DBJ_ASSERT(item);
 
     size_t i = 0;
     for (i = 0; i < vector->m_size; ++i) {
