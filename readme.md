@@ -5,7 +5,9 @@
   - [But,but, what about ... ?](#butbut-what-about--)
   - [NOTES](#notes)
 - [Orthodox C++ and unorthodox C](#orthodox-c-and-unorthodox-c)
+- [Dependencies](#dependencies)
 - [Building](#building)
+  - [Notes on building](#notes-on-building)
 - [Debugging](#debugging)
   
 # &nbsp;<!-- omit in toc -->
@@ -103,11 +105,28 @@ return type((char *)dbj_collector_alloc(size_));
    - That is revealing us/me as developing on Windows 10, only.
 - For linux compatibility proof, we/I (sometimes) offer Godbolt demos.
 
+# Dependencies
+
+- https://github.com/dbj-data/machine_wide
+    - check it out somewhere on your machine
+    - add it to the `INCLUDE` env var
+    - add ti to the  `IncludePath` in `.vscode/c_cpp_properties.json`
+
 # Building
+
 - `clang-cl` is mandatory
 - C++17 is mandatory
 - use `build_fixed_string_poc.cmd`
 - output goes to the `bin` folder
+
+## Notes on building
+
+VS Code C/C++ compiling using nothing but `.vscode/` stuff is one very deep rabbit hole. For building inside VS Code, use batch scripts and for complex projects use Visual Studio.
+
+What they do not tell you in the school about CMake is: it is good but ONLY for multi platform projects. We have seen many beginners jumping head first into CMake without first realising what is it actually for. Another reason people do use CMake is: there is nothing like Visual Studio on Linux. There is CLion but that is just one large front end to CMake; written in Java. And it is written in Java by the inventors of Kotlin. Why?
+
+There are many Linux Devops teams using VisualStudio and Windows10 workstations just because of Visual Studio. Please [proceed here](https://devblogs.microsoft.com/cppblog/linux-development-with-c-in-visual-studio-2019-wsl-asan-for-linux-separation-of-build-and-debug/).
+
 # Debugging
 - position yourself on the `fixed_string_poc.cpp`
 - goto debugger and start debugging
