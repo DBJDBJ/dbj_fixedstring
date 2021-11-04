@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug ${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "type": "cppvsdbg",
+            "request": "launch",
+            /*
+            use the build-fixed-string-poc.cmd
+            */
+            "program": "${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
+            /* the UBENCH arg */
+            "args": ["--confidence=20"],
+            "stopAtEntry": true,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "console": "internalConsole"
+        }
+    ]
+}

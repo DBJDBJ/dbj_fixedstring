@@ -1,0 +1,9 @@
+*~
+*.out
+keystat.*
+
+# windows cruft
+*.exe
+*.ilk
+*.pdb
+*.obj
