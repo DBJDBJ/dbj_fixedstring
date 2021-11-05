@@ -125,6 +125,10 @@ Let us be honest with you :wink:
    - That is rendering us as developing on Windows 10, only.
 - For linux compatibility proof, we (sometimes) offer Godbolt demos.
 
+Very good UTHASH library is used. Although extensions had to be added for it to be able to deal with `unsigned char []`. See the `dbj_uthash.h`.
+
+Also: https://godbolt.org/z/fKxfYqv5r
+
 # Building
 
 - `clang-cl` is mandatory
