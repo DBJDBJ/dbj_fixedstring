@@ -477,25 +477,22 @@ do {                                                                            
   HASH_FSCK(hh, head, "HASH_DELETE_HH");                                         \
 } while (0)
 
-// DBJ: added cast to const char *
 /* convenience forms of HASH_FIND/HASH_ADD/HASH_DEL */
 #define HASH_FIND_STR(head,findstr,out)                                          \
 do {                                                                             \
-    unsigned _uthash_hfstr_keylen = (unsigned)uthash_strlen((const char *)findstr);            \
+    unsigned _uthash_hfstr_keylen = (unsigned)uthash_strlen(findstr);            \
     HASH_FIND(hh, head, findstr, _uthash_hfstr_keylen, out);                     \
 } while (0)
 
-// DBJ: added cast to const char *
 #define HASH_ADD_STR(head,strfield,add)                                          \
 do {                                                                             \
-    unsigned _uthash_hastr_keylen = (unsigned)uthash_strlen((const char *)(add)->strfield);    \
+    unsigned _uthash_hastr_keylen = (unsigned)uthash_strlen((add)->strfield);    \
     HASH_ADD(hh, head, strfield[0], _uthash_hastr_keylen, add);                  \
 } while (0)
 
-// DBJ: added cast to const char *
 #define HASH_REPLACE_STR(head,strfield,add,replaced)                             \
 do {                                                                             \
-    unsigned _uthash_hrstr_keylen = (unsigned)uthash_strlen((const char *)(add)->strfield);    \
+    unsigned _uthash_hrstr_keylen = (unsigned)uthash_strlen((add)->strfield);    \
     HASH_REPLACE(hh, head, strfield[0], _uthash_hrstr_keylen, add, replaced);    \
 } while (0)
 

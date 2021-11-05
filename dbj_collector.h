@@ -38,6 +38,7 @@ please include through here always
 #ifdef DBJ_COLLECTOR_INC_USES_VECTOR
 #include "dbj_collector_vector_imp.h"
 #else  // default is implementation using UTHASH
+#include "dbj_uthash.h" // dbj extensions
 #include "dbj_collector_hash_imp.h"
 #endif  // ! DBJ_COLLECTOR_INC_USES_VECTOR
 

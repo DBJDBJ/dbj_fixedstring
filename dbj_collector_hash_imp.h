@@ -67,7 +67,7 @@ void *dbj_collector_alloc(size_t size_)
     if (new_node)
     {
         dbj_collector_node *head_ = dbj_collector_hasht() ;
-        HASH_ADD_STR( head_, block, new_node);
+        HASH_ADD_UCHARR( head_, block, new_node);
         return new_node->block;
     }
 
@@ -82,7 +82,7 @@ bool dbj_collector_free ( void * block_pointer )
 
     dbj_collector_node *node_ = 0 ;
 
-    HASH_FIND_STR( dbj_collector_hasht(), (char*)block_pointer, node_ );
+    HASH_FIND_UCHARR( dbj_collector_hasht(), (char*)block_pointer, node_ );
 
     if ( node_ ){
         dbj_collector_node *head_ = dbj_collector_hasht() ;
