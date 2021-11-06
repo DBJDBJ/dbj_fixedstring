@@ -31,17 +31,19 @@ call "D:\PROD\programs\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build
 
 @REM @set "INCLUDE=D:\machine_wide;%INCLUDE%"
 
+@set "basename=fixed_string_poc"
+
 @if [%1] == [release] goto build_release
 
 @rem default is goto build_debug
 
 :: default
 :build_debug
-clang-cl /std:c++17 /GR- /J /MTd /Zi -D_DEBUG fixed_string_poc.cpp /o out/comp.exe 
+clang-cl /std:c++17 /GR- /J /MTd /Zi -D_DEBUG %basename%.cpp /o out/%basename%.exe 
 @goto exit
 
 :build_release
-clang-cl /std:c++17 /GR- /J /O2 /MT -DNDEBUG fixed_string_poc.cpp /o out/comp.exe
+clang-cl /std:c++17 /GR- /J /O2 /MT -DNDEBUG %basename%.cpp /o out/%basename%.exe
 @goto exit
 
 @rem IF USING ./vector add on both lines above vector/vector.c

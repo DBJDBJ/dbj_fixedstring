@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.go": "go",
+        "*.hta": "html",
         "system_error": "cpp",
         "xlocale": "cpp",
         "xstring": "cpp",
@@ -50,6 +51,10 @@
         "xmemory": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "cassert": "cpp",
+        "utest.h": "c",
+        "dbj_collector.h": "c",
+        "dbj_collector_hash_imp.h": "c"
     }
 }

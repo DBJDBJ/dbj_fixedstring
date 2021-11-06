@@ -52,8 +52,8 @@ auto global_fixie_ = dbj::fixed_string::make(0xFF);
   global_fixie_.clean('?') ;
 
   /*
-  just a view, therefore data inside is cleaned, 
-  and both are referencing the same cleaned data
+  just a view, therefore data inside is cleaned for both
+  as both are referencing the same cleaned data
   */
   assert( global_fixie_[0] == '?' );
   assert( local_pixie_[0] == '?' );
@@ -135,6 +135,8 @@ int main(int argc, const char *const argv[])
   // kick start the VT100 emulator
         system(" ");
   #endif
+
+  hammer_the_fixed_string();
 
   return ubench_main(argc, argv);
 }

@@ -1450,7 +1450,9 @@ typedef basic_string_view<char16_t>  u16string_view;
 typedef basic_string_view<char32_t>  u32string_view;
 #endif
 
-}} // namespace nonstd::sv_lite
+}
+
+} // namespace nonstd::sv_lite
 
 //
 // 24.4.6 Suffix for basic_string_view literals:

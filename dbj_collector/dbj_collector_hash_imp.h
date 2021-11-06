@@ -38,11 +38,9 @@ DBJ_EXTERN_C_END
 ////////////////////////////////////////////////////////////////////////////////////
 #ifdef DBJ_COLLECTOR_IMP
 
-#include "uthash_local/src/uthash.h"
+#include "../uthash_local/src/uthash.h"
 
 DBJ_EXTERN_C_BEGIN
-
-enum  { DBJ_COLLECTOR_INIT_SZE = 0xFF ,DBJ_COLLECTOR_INIT_CCTY = DBJ_COLLECTOR_INIT_SZE * 2 } ;
 
 typedef struct dbj_collector_
 {
@@ -53,10 +51,12 @@ typedef struct dbj_collector_
 } dbj_collector_node;
 
 // not thread safe. yet.
- dbj_collector_node *dbj_collector_hasht (void) {
-    static dbj_collector_node * hasht_ = NULL ;
-    return hasht_ ;
-}
+// global var in C has static storage duration
+    dbj_collector_node * hasht_global_ptr_ = NULL ;
+//
+//  dbj_collector_node *dbj_collector_ptr (void) {
+//     return hasht_global_ptr_ ;
+// }
 
 //  on ENOMEM sets errno to ENOMEM and returns 0
 void *dbj_collector_alloc(size_t size_)
@@ -66,8 +66,8 @@ void *dbj_collector_alloc(size_t size_)
 
     if (new_node)
     {
-        dbj_collector_node *head_ = dbj_collector_hasht() ;
-        HASH_ADD_UCHARR( head_, block, new_node);
+        HASH_ADD_UCHARR( hasht_global_ptr_, block, new_node);
+        assert(hasht_global_ptr_);
         return new_node->block;
     }
 
@@ -80,14 +80,14 @@ bool dbj_collector_free ( void * block_pointer )
 {
     if (! block_pointer ) return false ;
 
+    if (! hasht_global_ptr_ ) return false ;
+    
     dbj_collector_node *node_ = 0 ;
 
-    HASH_FIND_UCHARR( dbj_collector_hasht(), (char*)block_pointer, node_ );
+    HASH_FIND_UCHARR( hasht_global_ptr_, block_pointer, node_ );
 
     if ( node_ ){
-        dbj_collector_node *head_ = dbj_collector_hasht() ;
-            assert(head_);
-            HASH_DEL( head_, node_ );
+            HASH_DEL( hasht_global_ptr_, node_ );
                 block_pointer = NULL ;
         return true ;
     }
@@ -105,14 +105,13 @@ bool dbj_collector_free ( void * block_pointer )
 
 DBJ_COLLECTOR_DESTRUCTOR void dbj_collector_destruct(void)
 {
-    dbj_collector_node *head_ = dbj_collector_hasht() ;
-    if (head_){
+    if (hasht_global_ptr_){
 /* 
 If you only want to delete all the items, but not free them 
 or do any per-element clean up, 
 you can do this more efficiently in a single operation:
 */
-        HASH_CLEAR(hh, head_);
+        HASH_CLEAR(hh, hasht_global_ptr_);
     }
 }
 

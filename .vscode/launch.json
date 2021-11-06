@@ -11,9 +11,20 @@
             /*
             use the build-fixed-string-poc.cmd
             */
-            "program": "${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
+            "program": "${fileDirname}\\out\\${fileBasenameNoExtension}.exe",
             /* the UBENCH arg */
             "args": ["--confidence=20"],
+            "stopAtEntry": true,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "console": "internalConsole"
+        },
+        {
+            "name": "COLLECTOR ONLY",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\..\\out\\${fileBasenameNoExtension}.exe",
+            "args": [],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",
             "environment": [],
