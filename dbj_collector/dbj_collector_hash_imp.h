@@ -51,12 +51,10 @@ typedef struct dbj_collector_
 } dbj_collector_node;
 
 // not thread safe. yet.
-// global var in C has static storage duration
-    dbj_collector_node * hasht_global_ptr_ = NULL ;
-//
-//  dbj_collector_node *dbj_collector_ptr (void) {
-//     return hasht_global_ptr_ ;
-// }
+ dbj_collector_node ** dbj_collector_ptr (void) {
+    static dbj_collector_node * hasht_global_pointer_ = NULL ;
+    return & hasht_global_pointer_ ;
+}
 
 //  on ENOMEM sets errno to ENOMEM and returns 0
 void *dbj_collector_alloc(size_t size_)
@@ -66,8 +64,9 @@ void *dbj_collector_alloc(size_t size_)
 
     if (new_node)
     {
-        HASH_ADD_UCHARR( hasht_global_ptr_, block, new_node);
-        assert(hasht_global_ptr_);
+        dbj_collector_node ** head_ = dbj_collector_ptr();
+        HASH_ADD_UCHARR( *head_ , block, new_node);
+        assert(*head_);
         return new_node->block;
     }
 
@@ -80,14 +79,16 @@ bool dbj_collector_free ( void * block_pointer )
 {
     if (! block_pointer ) return false ;
 
-    if (! hasht_global_ptr_ ) return false ;
+    dbj_collector_node ** head_ = dbj_collector_ptr();
+
+    if (! (*head_) ) return false ;
     
     dbj_collector_node *node_ = 0 ;
 
-    HASH_FIND_UCHARR( hasht_global_ptr_, block_pointer, node_ );
+    HASH_FIND_UCHARR( *head_, block_pointer, node_ );
 
     if ( node_ ){
-            HASH_DEL( hasht_global_ptr_, node_ );
+            HASH_DEL( *head_, node_ );
                 block_pointer = NULL ;
         return true ;
     }
@@ -105,13 +106,14 @@ bool dbj_collector_free ( void * block_pointer )
 
 DBJ_COLLECTOR_DESTRUCTOR void dbj_collector_destruct(void)
 {
-    if (hasht_global_ptr_){
+     dbj_collector_node ** head_ = dbj_collector_ptr();
+    if (*head_){
 /* 
 If you only want to delete all the items, but not free them 
 or do any per-element clean up, 
 you can do this more efficiently in a single operation:
 */
-        HASH_CLEAR(hh, hasht_global_ptr_);
+        HASH_CLEAR(hh, *head_);
     }
 }
 
