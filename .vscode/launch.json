@@ -11,13 +11,31 @@
             /*
             use the build-fixed-string-poc.cmd
             */
+<<<<<<< HEAD
             "program": "${fileDirname}\\bin\\${fileBasenameNoExtension}.exe",
+=======
+            "program": "${fileDirname}\\out\\${fileBasenameNoExtension}.exe",
+>>>>>>> 337dae0ef770c174a5655c12143ba0fb7df684a8
             /* the UBENCH arg */
             "args": ["--confidence=20"],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",
             "environment": [],
             "console": "internalConsole"
+<<<<<<< HEAD
+=======
+        },
+        {
+            "name": "COLLECTOR ONLY",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\..\\out\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "console": "internalConsole"
+>>>>>>> 337dae0ef770c174a5655c12143ba0fb7df684a8
         }
     ]
 }

@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "*.go": "go",
+<<<<<<< HEAD
+=======
+        "*.hta": "html",
+>>>>>>> 337dae0ef770c174a5655c12143ba0fb7df684a8
         "system_error": "cpp",
         "xlocale": "cpp",
         "xstring": "cpp",
@@ -50,6 +54,14 @@
         "xmemory": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
+<<<<<<< HEAD
         "xutility": "cpp"
+=======
+        "xutility": "cpp",
+        "cassert": "cpp",
+        "utest.h": "c",
+        "dbj_collector.h": "c",
+        "dbj_collector_hash_imp.h": "c"
+>>>>>>> 337dae0ef770c174a5655c12143ba0fb7df684a8
     }
 }

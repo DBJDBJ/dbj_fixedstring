@@ -3,8 +3,12 @@
         {
             "name": "Win32",
             "includePath": [
+<<<<<<< HEAD
                 "${workspaceFolder}/**",
                 "F:/machine_wide"
+=======
+                "${workspaceFolder}/**"
+>>>>>>> 337dae0ef770c174a5655c12143ba0fb7df684a8
             ],
             "defines": [
                 "_DEBUG",
